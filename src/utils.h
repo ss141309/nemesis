@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License along with nem
 
 #pragma once
 
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -62,11 +63,23 @@ static inline uint8_t get_0th_bit(uint8_t val) { return val & 0x01; }
 static inline uint8_t get_1st_bit(uint8_t val) { return val & 0x02; }
 static inline uint8_t get_2nd_bit(uint8_t val) { return val & 0x04; }
 static inline uint8_t get_3rd_bit(uint8_t val) { return val & 0x08; }
+static inline uint8_t get_5th_bit(uint8_t val) { return val & 0x20; }
+static inline uint8_t get_6th_bit(uint8_t val) { return val & 0x40; }
+static inline uint8_t get_7th_bit(uint8_t val) { return val & 0x80; }
 static inline uint8_t get_lower_2_bits(uint8_t val) { return val & 0x03; }
 static inline uint8_t get_lower_4_bits(uint8_t val) { return val & 0x0F; }
 static inline uint8_t get_lower_6_bits(uint8_t val) { return val & 0x3F; }
 static inline uint8_t get_upper_4_bits(uint8_t val) { return val >> 4; }
 static inline uint8_t get_upper_6_bits(uint8_t val) { return val >> 2; }
+
+static inline uint16_t clear_lower_byte(uint16_t val) { return val & 0xFF00; }
+static inline uint16_t get_lower_byte(uint16_t val) { return val & 0x00FF; }
+static inline uint16_t get_upper_byte(uint16_t val) { return val >> 8; }
+
+static inline bool check_if_bit0_set(uint8_t val) { return get_0th_bit(val) == 0x01; }
+static inline bool check_if_bit5_set(uint8_t val) { return get_5th_bit(val) == 0x20; }
+static inline bool check_if_bit6_set(uint8_t val) { return get_6th_bit(val) == 0x40; }
+static inline bool check_if_bit7_set(uint8_t val) { return get_7th_bit(val) == 0x80; }
 
 static inline const char* get_filename_from_path(const char* path) {
   const char* filename = strrchr(path, '/');

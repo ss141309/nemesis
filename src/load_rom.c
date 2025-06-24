@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License along with nem
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 
@@ -25,12 +24,12 @@ You should have received a copy of the GNU General Public License along with nem
 // TODO: support loading from compressed files
 
 // Assume that the ROM size cannot exceed 5MiB, and I am being generous here
-constexpr uint32_t MAX_ROM_SIZE = 5 * 1024 * 1024;
-constexpr uint8_t HEADER_SIZE = 16;
-constexpr uint8_t INES2_EXPONENTIATION_MODE = 0x0F;
-constexpr uint16_t CHR_ROM_UNIT_SIZE = 8 * 1024;
-constexpr uint16_t INES_PRG_RAM_UNIT_SIZE = 8 * 1024;
-constexpr uint16_t PRG_ROM_UNIT_SIZE = 16 * 1024;
+static constexpr uint32_t MAX_ROM_SIZE = 5 * 1024 * 1024;
+static constexpr uint8_t HEADER_SIZE = 16;
+static constexpr uint8_t INES2_EXPONENTIATION_MODE = 0x0F;
+static constexpr uint16_t CHR_ROM_UNIT_SIZE = 8 * 1024;
+static constexpr uint16_t INES_PRG_RAM_UNIT_SIZE = 8 * 1024;
+static constexpr uint16_t PRG_ROM_UNIT_SIZE = 16 * 1024;
 
 // TODO: support more formats
 typedef enum { FORMAT_TYPE_INES, FORMAT_TYPE_INES2, FORMAT_TYPE_NONE } format_type_t;
@@ -230,80 +229,43 @@ typedef enum {
   DEFAULT_EXPANSION_DEVICE_ARKANOID_VAUS_CONTROLLER_PROTOTYPE
 } default_expansion_device_t;
 static const char *default_expansion_device_string[] = {
-    "Unspecified",
-    "Standard NES/Famicom controllers",
+    "Unspecified", "Standard NES/Famicom controllers",
     "NES Four Score/Satellite with two additional standard controllers",
-    "Famicom Four Players Adapter with two additional standard controllers using the \"simple\" protocol",
-    "Vs. System (1P via $4016)",
-    "Vs. System (1P via $4017)",
-    "Reserved",
-    "Vs. Zapper",
-    "Zapper ($4017)",
-    "Two Zappers",
-    "Bandai Hyper Shot Lightgun",
-    "Power Pad Side A",
-    "Power Pad Side B",
-    "Family Trainer Side A",
-    "Family Trainer Side B",
-    "Arkanoid Vaus Controller (NES)",
-    "Arkanoid Vaus Controller (Famicom)",
-    "Two Vaus Controllers plus Famicom Data Recorder",
-    "Konami Hyper Shot Controller",
-    "Coconuts Pachinko Controller",
-    "Exciting Boxing Punching Bag (Blowup Doll)",
-    "Jissen Mahjong Controller",
-    "Party Tap",
-    "Oeka Kids Tablet",
-    "Sunsoft Barcode Battler",
-    "Miracle Piano Keyboard",
-    "Pokkun Moguraa (Whack-a-Mole Mat and Mallet)",
+    // clang-format off
+	"Famicom Four Players Adapter with two additional standard controllers using the \"simple\" protocol",
+    // clang-format on
+    "Vs. System (1P via $4016)", "Vs. System (1P via $4017)", "Reserved", "Vs. Zapper",
+    "Zapper ($4017)", "Two Zappers", "Bandai Hyper Shot Lightgun", "Power Pad Side A",
+    "Power Pad Side B", "Family Trainer Side A", "Family Trainer Side B",
+    "Arkanoid Vaus Controller (NES)", "Arkanoid Vaus Controller (Famicom)",
+    "Two Vaus Controllers plus Famicom Data Recorder", "Konami Hyper Shot Controller",
+    "Coconuts Pachinko Controller", "Exciting Boxing Punching Bag (Blowup Doll)",
+    "Jissen Mahjong Controller", "Party Tap", "Oeka Kids Tablet", "Sunsoft Barcode Battler",
+    "Miracle Piano Keyboard", "Pokkun Moguraa (Whack-a-Mole Mat and Mallet)",
     "Top Rider (Inflatable Bicycle)",
-    "Double-Fisted (Requires or allows use of two controllers by one player)",
-    "Famicom 3D System",
-    "Doremikko Keyboard",
-    "R.O.B. Gyro Set",
-    "Famicom Data Recorder (\"silent\" keyboard)",
-    "ASCII Turbo File",
-    "IGS Storage Battle Box",
-    "Family BASIC Keyboard plus Famicom Data Recorder",
-    "东达 (Dōngdá) PEC Keyboard",
-    "普澤 (Pǔzé, a.k.a. Bit Corp.) Bit-79 Keyboard",
-    "小霸王 (Xiǎobàwáng, a.k.a. Subor) Keyboard",
+    "Double-Fisted (Requires or allows use of two controllers by one player)", "Famicom 3D System",
+    "Doremikko Keyboard", "R.O.B. Gyro Set", "Famicom Data Recorder (\"silent\" keyboard)",
+    "ASCII Turbo File", "IGS Storage Battle Box",
+    "Family BASIC Keyboard plus Famicom Data Recorder", "东达 (Dōngdá) PEC Keyboard",
+    "普澤 (Pǔzé, a.k.a. Bit Corp.) Bit-79 Keyboard", "小霸王 (Xiǎobàwáng, a.k.a. Subor) Keyboard",
     "小霸王 (Xiǎobàwáng, a.k.a. Subor) Keyboard plus mouse (3x8-bit protocol)",
     "小霸王 (Xiǎobàwáng, a.k.a. Subor) Keyboard plus mouse (24-bit protocol via $4016)",
-    "SNES Mouse ($4016.d0)",
-    "Multicart",
-    "Two SNES controllers replacing the two standard NES controllers",
-    "RacerMate Bicycle",
-    "U-Force",
-    "R.O.B. Stack-Up",
-    "City Patrolman Lightgun",
-    "Sharp C1 Cassette Interface",
-    "Standard Controller with swapped Left-Right/Up-Down/B-A",
-    "Excalibur Sudoku Pad",
-    "ABL Pinball",
-    "Golden Nugget Casino extra buttons",
-    "科达 (Kēdá) Keyboard",
+    "SNES Mouse ($4016.d0)", "Multicart",
+    "Two SNES controllers replacing the two standard NES controllers", "RacerMate Bicycle",
+    "U-Force", "R.O.B. Stack-Up", "City Patrolman Lightgun", "Sharp C1 Cassette Interface",
+    "Standard Controller with swapped Left-Right/Up-Down/B-A", "Excalibur Sudoku Pad",
+    "ABL Pinball", "Golden Nugget Casino extra buttons", "科达 (Kēdá) Keyboard",
     "小霸王 (Xiǎobàwáng, a.k.a. Subor) Keyboard plus mouse (24-bit protocol via $4017)",
-    "Port test controller",
-    "Bandai Multi Game Player Gamepad buttons",
-    "Venom TV Dance Mat",
-    "LG TV Remote Control",
-    "Famicom Network Controller",
-    "King Fishing Controller",
-    "Croaky Karaoke Controller",
-    "科王 (Kēwáng, a.k.a. Kingwon) Keyboard",
+    "Port test controller", "Bandai Multi Game Player Gamepad buttons", "Venom TV Dance Mat",
+    "LG TV Remote Control", "Famicom Network Controller", "King Fishing Controller",
+    "Croaky Karaoke Controller", "科王 (Kēwáng, a.k.a. Kingwon) Keyboard",
     "泽诚 (Zéchéng) Keyboard",
     "小霸王 (Xiǎobàwáng, a.k.a. Subor) Keyboard plus rotated PS/2 mouse in $4017",
-    "PS/2 Keyboard in UM6578 PS/2 port, PS/2 Mouse via $4017",
-    "PS/2 Mouse in UM6578 PS/2 port",
+    "PS/2 Keyboard in UM6578 PS/2 port, PS/2 Mouse via $4017", "PS/2 Mouse in UM6578 PS/2 port",
     "裕兴 (Yùxìng) Mouse via $4016",
     "小霸王 (Xiǎobàwáng, a.k.a. Subor) Keyboard plus 裕兴 (Yùxìng) mouse in $4016",
-    "Gigggle TV Pump",
-    "步步高 (Bùbùgāo, a.k.a. BBK) Keyboard plus rotated PS/2 mouse in $4017",
-    "Magical Cooking",
-    "SNES Mouse ($4017.d0)",
-    "Zapper ($4016)",
+    "Gigggle TV Pump", "步步高 (Bùbùgāo, a.k.a. BBK) Keyboard plus rotated PS/2 mouse in $4017",
+    "Magical Cooking", "SNES Mouse ($4017.d0)", "Zapper ($4016)",
     "Arkanoid Vaus Controller (Prototype)"};
 
 typedef enum { TV_SYSTEM_NTSC, TV_SYSTEM_PAL, TV_SYSTEM_NONE } tv_system_t;
@@ -541,7 +503,8 @@ void ines2_set_prg_ram_sizes(const uint8_t *header) {
 
   if (cartridge.ines2_header.prg_nvram_size > 0 && !cartridge.ines2_header.battery_present) {
     log_warn(
-        "This ROM is not compatible with iNES only emulators as the PRG NVRAM size is > 0 while the "
+        "This ROM is not compatible with iNES only emulators as the PRG NVRAM size is > 0 while "
+        "the "
         "battery is not present");
   }
 }
@@ -700,10 +663,10 @@ void ines_check_trainer_area_present(const uint8_t *header) {
 
 private
 void ines_set_mapper_number(const uint8_t *header) {
-  uint8_t mapper_lower_bits = get_upper_4_bits(header[6]);
-  uint8_t mapper_upper_bits = get_upper_4_bits(header[7]);
+  uint8_t mapper_lo = get_upper_4_bits(header[6]);
+  uint8_t mapper_hi = get_upper_4_bits(header[7]);
 
-  cartridge.ines_header.mapper_number = (uint8_t)(mapper_upper_bits << 4) | mapper_lower_bits;
+  cartridge.ines_header.mapper_number = (uint8_t)(mapper_hi << 4) | mapper_lo;
 
   log_info("Mapper Number: %d", cartridge.ines_header.mapper_number);
 }
