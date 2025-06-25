@@ -58,4 +58,4 @@ typedef struct {
 
 cpu_t cpu_power_on(void);
 void cpu_reset(cpu_t *cpu);
-void step_cpu(cpu_t *cpu);
+void cpu_step(cpu_t *cpu);

@@ -983,6 +983,7 @@ static const char *opcode_table_string[256] = {
 // clang-format on
 
 cpu_t cpu_power_on(void) {
+  log_info("CPU powered on");
   return (cpu_t){
       .pc = RESET_VECTOR,
       .sp = 0xFD,
@@ -1000,9 +1001,10 @@ void cpu_reset(cpu_t *cpu) {
   cpu->sp -= 3;
   cpu->s.bits.interrupt_disable = true;
   cpu->cycles = 0;
+  log_info("CPU reset successful");
 }
 
-void step_cpu(cpu_t *cpu) {
+void cpu_step(cpu_t *cpu) {
   uint8_t op = mem_read_byte(cpu);
   cpu->current_addr_mode = addr_mode_table[op];
   opcode_table[op](cpu);
